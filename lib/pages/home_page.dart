@@ -97,9 +97,12 @@ class SwiperDiy extends StatelessWidget {
           );
         },
         itemCount: swiperDateList.length,
-        // itemHeight: ScreenUtil().setHeight(100),
         autoplay: true,
-        pagination: SwiperPagination(),
+        pagination: SwiperPagination(
+          builder: DotSwiperPaginationBuilder(
+            activeColor: Colors.white,
+          ),
+        ),
       ),
     );
   }

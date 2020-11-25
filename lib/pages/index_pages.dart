@@ -34,8 +34,43 @@ class _IndexPageState extends State<IndexPage> {
 
     return Scaffold(
       appBar: AppBar(
-          //
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: false,
+        actions: [
+          Container(
+            // color: Colors.red,
+            width: 40,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              '我的课程',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 10,
+                color: Color(0xff726E6B),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
+          InkWell(
+            onTap: () {
+              print('我的课程');
+            },
+            child: Container(
+              width: 43,
+              padding: EdgeInsets.fromLTRB(18, 0, 20, 0),
+              // color: Colors.blue,
+              child: Image.asset(
+                'assets/appbar/lx_light_class_top_arrow.png',
+              ),
+            ),
+          )
+        ],
+        title: Text(
+          '轻课堂',
+          style: TextStyle(color: Colors.black),
+        ),
+      ),
       backgroundColor: Color.fromARGB(1, 244, 245, 245),
       body: this.tabs[this._currentIndex],
       bottomNavigationBar: BottomNavigationBar(
