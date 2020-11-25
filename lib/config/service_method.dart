@@ -75,8 +75,5 @@ Future homeCategoryPageContext() async {
 
 //获得商城首页信息的方法
 Future getHomePageContent() async {
-  return Future.wait([
-    homeCategoryPageContext(),
-    homeBannerPageContext(),
-  ]);
+  return Future.wait([homeBannerPageContext(), homeCategoryPageContext()]);
 }

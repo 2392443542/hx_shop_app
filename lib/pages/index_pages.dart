@@ -33,6 +33,9 @@ class _IndexPageState extends State<IndexPage> {
     // ScreenUtil.instance = ScreenUtil(width: 750, height: 1334)..init(context);
 
     return Scaffold(
+      appBar: AppBar(
+          //
+          ),
       backgroundColor: Color.fromARGB(1, 244, 245, 245),
       body: this.tabs[this._currentIndex],
       bottomNavigationBar: BottomNavigationBar(
