@@ -11,12 +11,67 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import '../config/service_url.dart';
 import '../config/service_method.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({Key key}) : super(key: key);
+class HomePage extends StatefulWidget {
+  HomePage({Key key}) : super(key: key);
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    print(this.widget);
+  }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: false,
+        actions: [
+          Container(
+            // color: Colors.red,
+            width: ScreenUtil().setWidth(90),
+            alignment: Alignment.centerLeft,
+            child: Text(
+              '我的课程',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: ScreenUtil().setWidth(20),
+                color: Color(0xff726E6B),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          InkWell(
+            onTap: () {
+              print('我的课程');
+            },
+            child: Container(
+              width: ScreenUtil().setWidth(50),
+              padding: EdgeInsets.fromLTRB(
+                  ScreenUtil().setWidth(18), 0, ScreenUtil().setWidth(20), 0),
+              color: Colors.blue,
+              child: Image.asset(
+                'assets/appbar/lx_light_class_top_arrow.png',
+              ),
+            ),
+          )
+        ],
+        title: Text(
+          '轻课堂',
+          style: TextStyle(color: Colors.black),
+        ),
+      ),
       body: Column(
         children: [
           Container(
@@ -49,6 +104,7 @@ class HomePage extends StatelessWidget {
               future: homeCategoryPageContext(),
             ),
           ),
+          HomePageRecommend(),
         ],
       ),
     );
@@ -149,6 +205,92 @@ class TopNavigator extends StatelessWidget {
           children: this.navigationList.map((item) {
             return _girdViewItemUI(context, item);
           }).toList()),
+    );
+  }
+}
+
+class HomePageRecommend extends StatefulWidget {
+  HomePageRecommend({Key key}) : super(key: key);
+  // final List<Widget> recommendList = List();
+  @override
+  _HomePageRecommendState createState() => _HomePageRecommendState();
+}
+
+class _HomePageRecommendState extends State<HomePageRecommend> {
+  List recommendList = List();
+  List<Widget> recommendCellList = List();
+  _HomePageRecommendState({this.recommendList});
+
+  void _getRecommend() {
+    getHomeRecommendList().then((value) {
+      var data = value["data"] as Map;
+      setState(() {
+        recommendList = data["Items"] as List;
+
+        _getRecommendCellList();
+        // print("数据请求完成 ${recommendList}");
+      });
+    });
+  }
+
+  Widget _recommendCell(value) {
+    String imageUrl;
+    String title;
+    List<Widget> tag;
+    setState(() {
+      imageUrl = value["cover"] as String;
+      title = value["title"] as String;
+      tag = ((value['flag'] as List).cast()).map((e) {
+        return Text('$e');
+      }).toList();
+    });
+
+    return InkWell(
+      child: Container(
+        child: Column(
+          children: [
+            Image.network(
+              imageUrl,
+              width: ScreenUtil().setWidth(375),
+            ),
+            Text(
+              title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                  color: Colors.pink, fontSize: ScreenUtil().setSp(26)),
+            ),
+            Row(
+              children: tag,
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _getRecommendCellList() {
+    recommendCellList = recommendList.map((e) {
+      return _recommendCell(e);
+    }).toList();
+    print("数据请求完成 ${recommendCellList}");
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    _getRecommend();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Wrap(
+        spacing: 2,
+        children: recommendCellList,
+      ),
     );
   }
 }

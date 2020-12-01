@@ -77,3 +77,25 @@ Future homeCategoryPageContext() async {
 Future getHomePageContent() async {
   return Future.wait([homeBannerPageContext(), homeCategoryPageContext()]);
 }
+
+Future getHomeRecommendList() async {
+  String path =
+      "https://apitest.hexiaoxiang.com/coursequality/api/v1/information/flow/recommend?last_index=0&platform=0";
+  return requestGet(path);
+}
+
+Future requestGet(url, {params}) async {
+  try {
+    Response response = Response();
+    if (params == null) {
+      response = await Dio().get(url);
+      // print("网络请求成功 ${response.data}}");
+      return response.data;
+    } else {
+      response = await Dio().get(url, queryParameters: params);
+      return response.data;
+    }
+  } catch (err) {
+    print("网络请求错误 $err");
+  }
+}

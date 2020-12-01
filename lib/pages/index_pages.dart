@@ -14,6 +14,9 @@ class IndexPage extends StatefulWidget {
   _IndexPageState createState() => _IndexPageState();
 }
 
+// @override
+// bool get wantKeepAlive => true;
+
 class _IndexPageState extends State<IndexPage> {
   final List<BottomNavigationBarItem> bottomTabs = [
     BottomNavigationBarItem(icon: Icon(CupertinoIcons.home), label: '首页'),
@@ -23,7 +26,12 @@ class _IndexPageState extends State<IndexPage> {
     BottomNavigationBarItem(icon: Icon(CupertinoIcons.memories), label: '我11的'),
   ];
 
-  final List tabs = [HomePage(), CategoryPage(), CartPage(), MemberPage()];
+  final List<Widget> tabs = [
+    HomePage(),
+    CategoryPage(),
+    CartPage(),
+    MemberPage()
+  ];
   int _currentIndex = 0;
   // var
 
@@ -33,46 +41,11 @@ class _IndexPageState extends State<IndexPage> {
     // ScreenUtil.instance = ScreenUtil(width: 750, height: 1334)..init(context);
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: false,
-        actions: [
-          Container(
-            // color: Colors.red,
-            width: 40,
-            alignment: Alignment.centerLeft,
-            child: Text(
-              '我的课程',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 10,
-                color: Color(0xff726E6B),
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          InkWell(
-            onTap: () {
-              print('我的课程');
-            },
-            child: Container(
-              width: 43,
-              padding: EdgeInsets.fromLTRB(18, 0, 20, 0),
-              // color: Colors.blue,
-              child: Image.asset(
-                'assets/appbar/lx_light_class_top_arrow.png',
-              ),
-            ),
-          )
-        ],
-        title: Text(
-          '轻课堂',
-          style: TextStyle(color: Colors.black),
-        ),
-      ),
       backgroundColor: Color.fromARGB(1, 244, 245, 245),
-      body: this.tabs[this._currentIndex],
+      body: IndexedStack(
+        index: this._currentIndex,
+        children: this.tabs,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: this.bottomTabs,
         type: BottomNavigationBarType.fixed,

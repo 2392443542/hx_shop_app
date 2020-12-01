@@ -2,13 +2,13 @@
 
 // import 'dart:js';
 
-import 'dart:convert';
+// import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import '../config/service_url.dart';
+// import '../config/service_url.dart';
 import '../config/service_method.dart';
 
 class HomePage extends StatelessWidget {
