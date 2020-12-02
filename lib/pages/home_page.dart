@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage>
                   List swiperDateList = getBannerData(snapshot.data);
                   return SwiperDiy(swiperDateList: swiperDateList);
                 } else {
-                  return Text('加载中');
+                  return Container();
                 }
               },
               future: homeBannerPageContext(),
@@ -107,7 +107,7 @@ class _HomePageState extends State<HomePage>
               future: homeCategoryPageContext(),
             ),
           ),
-          _getRecommendUI(),
+          // _getRecommendUI(),
         ],
       ),
     );
@@ -204,10 +204,14 @@ class _HomePageState extends State<HomePage>
               borderRadius: BorderRadius.all(
                 Radius.circular(ScreenUtil().setWidth(36)),
               ),
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.contain,
+              child: FadeInImage.assetNetwork(
+                placeholder: 'assets/placeholder/img_default_1_1.png',
+                image: imageUrl,
               ),
+              // Image.network(
+              //   imageUrl,
+              //   fit: BoxFit.contain,
+              // ),
             ),
             Container(
               alignment: Alignment.centerLeft,
@@ -284,8 +288,9 @@ class SwiperDiy extends StatelessWidget {
           var imageStr = bannerData["image_url"];
           return ClipRRect(
             borderRadius: BorderRadius.circular(20),
-            child: Image.network(
-              imageStr,
+            child: FadeInImage.assetNetwork(
+              placeholder: 'assets/placeholder/img_default_16_9.png',
+              image: imageStr,
               fit: BoxFit.cover,
             ),
           );
@@ -313,8 +318,9 @@ class TopNavigator extends StatelessWidget {
       },
       child: Column(
         children: [
-          Image.network(
-            item["icon"],
+          FadeInImage.assetNetwork(
+            placeholder: 'assets/placeholder/img_default_1_1.png',
+            image: item["icon"],
             fit: BoxFit.contain,
             width: ScreenUtil().setWidth(50),
             height: ScreenUtil().setHeight(40),
