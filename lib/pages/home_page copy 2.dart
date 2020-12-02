@@ -3,7 +3,6 @@
 // import 'dart:js';
 
 import 'dart:convert';
-// import 'dart:html';
 
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
@@ -23,12 +22,10 @@ class _HomePageState extends State<HomePage>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
-  List recommendList = [];
 
   @override
   void initState() {
     super.initState();
-    _getRecommend();
     print(this.widget);
   }
 
@@ -75,7 +72,7 @@ class _HomePageState extends State<HomePage>
           style: TextStyle(color: Colors.black),
         ),
       ),
-      body: ListView(
+      body: Column(
         children: [
           Container(
             height: ScreenUtil().setHeight(272),
@@ -107,7 +104,7 @@ class _HomePageState extends State<HomePage>
               future: homeCategoryPageContext(),
             ),
           ),
-          _getRecommendUI(),
+          HomePageRecommend(),
         ],
       ),
     );
@@ -131,141 +128,6 @@ class _HomePageState extends State<HomePage>
     Map ad_zone_list = (dataFirst['ad_zone_list'] as List).first;
     List bannerList = ad_zone_list['ad_list'];
     return bannerList;
-  }
-
-  void _getRecommend() {
-    getHomeRecommendList().then((value) {
-      var data = value["data"] as Map;
-      // print("数据请求完成 ${data}");
-      setState(() {
-        recommendList = data["Items"] as List;
-      });
-    });
-  }
-
-  Widget _recommendCell(value) {
-    String imageUrl;
-    String title;
-    List tag;
-    // List<Widget> tagUI;
-
-    imageUrl = value["cover"] as String;
-    title = value["title"] as String;
-    tag = (value['flag'] as List).cast();
-
-    List<Widget> _getTag() {
-      Widget widget;
-      List<Widget> tagUI = [];
-      if (tag.length > 0) {
-        int count = tag.length > 2 ? 2 : tag.length;
-        for (var i = 0; i < count; i++) {
-          String value = tag[i] as String;
-          // if (i == 0) {
-          widget = Container(
-            height: ScreenUtil().setWidth(40),
-            alignment: Alignment.center,
-            // margin: EdgeInsets.only(right: ScreenUtil().setWidth(30)),
-            padding: EdgeInsets.only(
-                left: ScreenUtil().setWidth(16),
-                right: ScreenUtil().setWidth(16)),
-            child: Text(
-              value,
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: Color(0xFFE69256),
-                fontSize: ScreenUtil().setWidth(24),
-              ),
-            ),
-            decoration: BoxDecoration(
-              color: Color(0xFFFFF2B4),
-              borderRadius: BorderRadius.all(
-                Radius.circular(ScreenUtil().setWidth(20)),
-              ),
-            ),
-          );
-
-          tagUI.add(widget);
-        }
-      }
-      return tagUI;
-    }
-
-    return InkWell(
-      child: Container(
-        width: ScreenUtil().setWidth(330),
-        // height: ScreenUtil().setWidth(498),
-        // color: Colors.red,
-        padding: EdgeInsets.fromLTRB(0, ScreenUtil().setWidth(32), 0, 0),
-        child: Column(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.all(
-                Radius.circular(ScreenUtil().setWidth(36)),
-              ),
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.contain,
-              ),
-            ),
-            Container(
-              alignment: Alignment.centerLeft,
-              padding: EdgeInsets.only(
-                top: ScreenUtil().setWidth(20),
-                bottom: ScreenUtil().setWidth(20),
-              ),
-              child: Text(
-                title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  color: Color(0xFF726E6B),
-                  fontSize: ScreenUtil().setWidth(32),
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Container(
-              child: Row(
-                children: _getTag(),
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  List<Widget> _getRecommendCellList() {
-    try {
-      if (recommendList.length > 0) {
-        List<Widget> cellList = recommendList.map((e) {
-          if (e != null) {
-            return _recommendCell(e);
-          }
-        }).toList();
-        return cellList;
-      }
-    } catch (e) {
-      print('课节error ${e}');
-    }
-  }
-
-  Widget _getRecommendUI() {
-    if (recommendList.length > 0) {
-      return Container(
-        child: Wrap(
-            spacing: ScreenUtil().setWidth(20),
-            children: _getRecommendCellList(),
-            alignment: WrapAlignment.center,
-            runAlignment: WrapAlignment.start),
-      );
-    } else {
-      return Text('');
-    }
   }
 }
 
@@ -343,6 +205,92 @@ class TopNavigator extends StatelessWidget {
           children: this.navigationList.map((item) {
             return _girdViewItemUI(context, item);
           }).toList()),
+    );
+  }
+}
+
+class HomePageRecommend extends StatefulWidget {
+  HomePageRecommend({Key key}) : super(key: key);
+  // final List<Widget> recommendList = List();
+  @override
+  _HomePageRecommendState createState() => _HomePageRecommendState();
+}
+
+class _HomePageRecommendState extends State<HomePageRecommend> {
+  List recommendList = List();
+  List<Widget> recommendCellList = List();
+  _HomePageRecommendState({this.recommendList});
+
+  void _getRecommend() {
+    getHomeRecommendList().then((value) {
+      var data = value["data"] as Map;
+      setState(() {
+        recommendList = data["Items"] as List;
+
+        _getRecommendCellList();
+        // print("数据请求完成 ${recommendList}");
+      });
+    });
+  }
+
+  Widget _recommendCell(value) {
+    String imageUrl;
+    String title;
+    List<Widget> tag;
+    setState(() {
+      imageUrl = value["cover"] as String;
+      title = value["title"] as String;
+      tag = ((value['flag'] as List).cast()).map((e) {
+        return Text('$e');
+      }).toList();
+    });
+
+    return InkWell(
+      child: Container(
+        child: Column(
+          children: [
+            Image.network(
+              imageUrl,
+              width: ScreenUtil().setWidth(375),
+            ),
+            Text(
+              title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                  color: Colors.pink, fontSize: ScreenUtil().setSp(26)),
+            ),
+            Row(
+              children: tag,
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _getRecommendCellList() {
+    recommendCellList = recommendList.map((e) {
+      return _recommendCell(e);
+    }).toList();
+    print("数据请求完成 ${recommendCellList}");
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    _getRecommend();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Wrap(
+        spacing: 2,
+        children: recommendCellList,
+      ),
     );
   }
 }
