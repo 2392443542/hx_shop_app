@@ -2,57 +2,115 @@
 
 // import 'dart:js';
 
-// import 'dart:convert';
+import 'dart:convert';
+// import 'dart:html';
 
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-// import '../config/service_url.dart';
+import '../config/service_url.dart';
 import '../config/service_method.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({Key key}) : super(key: key);
+class HomePage extends StatefulWidget {
+  HomePage({Key key}) : super(key: key);
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+  List recommendList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _getRecommend();
+    print(this.widget);
+  }
 
   @override
   Widget build(BuildContext context) {
-    List swiperDateList = [
-      "https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2583035764,1571388243&fm=26&gp=0.jpg",
-      "https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2771978851,2906984932&fm=26&gp=0.jpg",
-      'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=1546500353,2204894501&fm=26&gp=0.jpg'
-    ];
+    super.build(context);
     return Scaffold(
-        body: FutureBuilder(
-      future: getHomePageContent(),
-      builder: (context, snapshot) {
-        // print('请求完成${snapshot.connectionState}--->${snapshot.data}');
-        if (snapshot.connectionState == ConnectionState.done &&
-            snapshot.hasData) {
-          List allData = snapshot.data;
-
-          //
-          print('序列化----${allData.first.toString()}');
-          // print('序列化----${snapshot.data}');
-
-          Map<String, dynamic> navigationData =
-              new Map<String, dynamic>.from(allData.first);
-          print('序列化--data--${snapshot.data}');
-          List navigatorList = getNavigationData(navigationData);
-          List swiperDateList = getBannerData(allData.last);
-
-          return Column(
-            children: [
-              SwiperDiy(swiperDateList: swiperDateList),
-              TopNavigator(navigationList: navigatorList)
-            ],
-          );
-        } else {
-          return Center(
-            child: Text('fdf'),
-          );
-        }
-      },
-    ));
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: false,
+        actions: [
+          Container(
+            // color: Colors.red,
+            width: ScreenUtil().setWidth(90),
+            alignment: Alignment.centerLeft,
+            child: Text(
+              '我的课程',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: ScreenUtil().setWidth(20),
+                color: Color(0xff726E6B),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          InkWell(
+            onTap: () {
+              print('我的课程');
+            },
+            child: Container(
+              width: ScreenUtil().setWidth(50),
+              padding: EdgeInsets.fromLTRB(
+                  ScreenUtil().setWidth(18), 0, ScreenUtil().setWidth(20), 0),
+              color: Colors.blue,
+              child: Image.asset(
+                'assets/appbar/lx_light_class_top_arrow.png',
+              ),
+            ),
+          )
+        ],
+        title: Text(
+          '轻课堂',
+          style: TextStyle(color: Colors.black),
+        ),
+      ),
+      body: ListView(
+        children: [
+          Container(
+            height: ScreenUtil().setHeight(272),
+            child: FutureBuilder(
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done &&
+                    snapshot.hasData) {
+                  List swiperDateList = getBannerData(snapshot.data);
+                  return SwiperDiy(swiperDateList: swiperDateList);
+                } else {
+                  return Container();
+                }
+              },
+              future: homeBannerPageContext(),
+            ),
+          ),
+          Container(
+            height: ScreenUtil().setHeight(300),
+            child: FutureBuilder(
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done &&
+                    snapshot.hasData) {
+                  List navigatorList = getNavigationData(snapshot.data);
+                  return TopNavigator(navigationList: navigatorList);
+                } else {
+                  return Text('加载中');
+                }
+              },
+              future: homeCategoryPageContext(),
+            ),
+          ),
+          // _getRecommendUI(),
+        ],
+      ),
+    );
   }
 
   List getNavigationData(Map data) {
@@ -60,7 +118,7 @@ class HomePage extends StatelessWidget {
     List<Map<String, dynamic>> navigatorList =
         (items_first['category_list'] as List).cast(); // 顶部轮播组件数
     Map items_last = (data['data']['Items'] as List).last;
-    print('序列化--navigatorList--${navigatorList}\n');
+
     List<Map<String, dynamic>> categotory =
         (items_last['category_list'] as List).cast();
     navigatorList.addAll(categotory);
@@ -68,37 +126,149 @@ class HomePage extends StatelessWidget {
   }
 
   List getBannerData(Map data) {
-    Map ad_zone_list = (data['data'] as List).first;
-    List bannerList = ad_zone_list['ad_zone_list'] as List;
+    Map dataFirst = (data['data'] as List).first;
+
+    Map ad_zone_list = (dataFirst['ad_zone_list'] as List).first;
+    List bannerList = ad_zone_list['ad_list'];
     return bannerList;
   }
-  // Future getHomePageContent() async {
-  //   try {
-  //     Response response;
-  //     final path =
-  //         "https://apitest.hexiaoxiang.com/coursequality/api/v1/category/list?layer=1&platform=0";
-  //     // servicePath['homePageContext'];
-  //     response = await Dio().get(path);
-  //     // print('结果--${response.data}');
-  //     return response.data;
-  //   } catch (err) {
-  //     print('错误---$err');
-  //   }
-  // }
 
-  Future getHttp() async {
+  void _getRecommend() {
+    getHomeRecommendList().then((value) {
+      var data = value["data"] as Map;
+      // print("数据请求完成 ${data}");
+      setState(() {
+        recommendList = data["Items"] as List;
+      });
+    });
+  }
+
+  Widget _recommendCell(value) {
+    String imageUrl;
+    String title;
+    List tag;
+    // List<Widget> tagUI;
+
+    imageUrl = value["cover"] as String;
+    title = value["title"] as String;
+    tag = (value['flag'] as List).cast();
+
+    List<Widget> _getTag() {
+      Widget widget;
+      List<Widget> tagUI = [];
+      if (tag.length > 0) {
+        int count = tag.length > 2 ? 2 : tag.length;
+        for (var i = 0; i < count; i++) {
+          String value = tag[i] as String;
+          // if (i == 0) {
+          widget = Container(
+            height: ScreenUtil().setWidth(40),
+            alignment: Alignment.center,
+            // margin: EdgeInsets.only(right: ScreenUtil().setWidth(30)),
+            padding: EdgeInsets.only(
+                left: ScreenUtil().setWidth(16),
+                right: ScreenUtil().setWidth(16)),
+            child: Text(
+              value,
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: Color(0xFFE69256),
+                fontSize: ScreenUtil().setWidth(24),
+              ),
+            ),
+            decoration: BoxDecoration(
+              color: Color(0xFFFFF2B4),
+              borderRadius: BorderRadius.all(
+                Radius.circular(ScreenUtil().setWidth(20)),
+              ),
+            ),
+          );
+
+          tagUI.add(widget);
+        }
+      }
+      return tagUI;
+    }
+
+    return InkWell(
+      child: Container(
+        width: ScreenUtil().setWidth(330),
+        // height: ScreenUtil().setWidth(498),
+        // color: Colors.red,
+        padding: EdgeInsets.fromLTRB(0, ScreenUtil().setWidth(32), 0, 0),
+        child: Column(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.all(
+                Radius.circular(ScreenUtil().setWidth(36)),
+              ),
+              child: FadeInImage.assetNetwork(
+                placeholder: 'assets/placeholder/img_default_1_1.png',
+                image: imageUrl,
+              ),
+              // Image.network(
+              //   imageUrl,
+              //   fit: BoxFit.contain,
+              // ),
+            ),
+            Container(
+              alignment: Alignment.centerLeft,
+              padding: EdgeInsets.only(
+                top: ScreenUtil().setWidth(20),
+                bottom: ScreenUtil().setWidth(20),
+              ),
+              child: Text(
+                title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  color: Color(0xFF726E6B),
+                  fontSize: ScreenUtil().setWidth(32),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Container(
+              child: Row(
+                children: _getTag(),
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _getRecommendCellList() {
     try {
-      Response response;
-      final path =
-          "https://apitest.hexiaoxiang.com/coursequality/api/v1/category/list?layer=1&platform=0";
-      // servicePath['homePageContext'];
+      if (recommendList.length > 0) {
+        List<Widget> cellList = recommendList.map((e) {
+          if (e != null) {
+            return _recommendCell(e);
+          }
+        }).toList();
+        return cellList;
+      }
+    } catch (e) {
+      print('课节error ${e}');
+    }
+  }
 
-      // "https://apitest.hexiaoxiang.com/coursequality/api/v1/information/flow/recommend?last_index=0&platform=0";
-      response = await Dio().get(path);
-      // print('结果--${response.data}');
-      return response.data;
-    } catch (err) {
-      print('错误---$err');
+  Widget _getRecommendUI() {
+    if (recommendList.length > 0) {
+      return Container(
+        child: Wrap(
+            spacing: ScreenUtil().setWidth(20),
+            children: _getRecommendCellList(),
+            alignment: WrapAlignment.center,
+            runAlignment: WrapAlignment.start),
+      );
+    } else {
+      return Text('');
     }
   }
 }
@@ -106,24 +276,32 @@ class HomePage extends StatelessWidget {
 class SwiperDiy extends StatelessWidget {
   final List swiperDateList;
   const SwiperDiy({Key key, this.swiperDateList}) : super(key: key);
-  // print('$swiperDateList');
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: ScreenUtil().setHeight(300),
-      color: Colors.red,
+      height: ScreenUtil().setHeight(272),
+      padding: EdgeInsets.all(15),
+      color: Colors.white,
       child: Swiper(
         itemBuilder: (BuildContext context, int index) {
-          var imageStr = this.swiperDateList[index];
-          return Image.network(
-            imageStr,
-            fit: BoxFit.cover,
+          Map bannerData = this.swiperDateList[index];
+          var imageStr = bannerData["image_url"];
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: FadeInImage.assetNetwork(
+              placeholder: 'assets/placeholder/img_default_16_9.png',
+              image: imageStr,
+              fit: BoxFit.cover,
+            ),
           );
         },
         itemCount: swiperDateList.length,
-        // itemHeight: ScreenUtil().setHeight(100),
         autoplay: true,
-        pagination: SwiperPagination(),
+        pagination: SwiperPagination(
+          builder: DotSwiperPaginationBuilder(
+            activeColor: Colors.white,
+          ),
+        ),
       ),
     );
   }
@@ -140,14 +318,14 @@ class TopNavigator extends StatelessWidget {
       },
       child: Column(
         children: [
-          Image.network(
-            item["icon"],
+          FadeInImage.assetNetwork(
+            placeholder: 'assets/placeholder/img_default_1_1.png',
+            image: item["icon"],
             fit: BoxFit.contain,
-            width: ScreenUtil().setWidth(60),
-            height: ScreenUtil().setHeight(50),
+            width: ScreenUtil().setWidth(50),
+            height: ScreenUtil().setHeight(40),
           ),
           Container(
-            // height: ScreenUtil().setHeight(17),
             child: Text(
               item['title'],
               style: TextStyle(fontSize: 12, color: const Color(0xff726E6B)),
@@ -161,12 +339,13 @@ class TopNavigator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: ScreenUtil().setHeight(412),
-      // color: Colors.red,
-      padding: EdgeInsets.all(5.0),
       child: GridView.count(
           crossAxisCount: 4,
           padding: EdgeInsets.all(5.0),
+          crossAxisSpacing: 1.0,
+          physics: NeverScrollableScrollPhysics(),
+          mainAxisSpacing: 1.0,
+          childAspectRatio: 1.5,
           children: this.navigationList.map((item) {
             return _girdViewItemUI(context, item);
           }).toList()),
