@@ -24,6 +24,7 @@ class _IndexPageState extends State<IndexPage> {
     BottomNavigationBarItem(
         icon: Icon(CupertinoIcons.shopping_cart), label: '购物车'),
     BottomNavigationBarItem(icon: Icon(CupertinoIcons.memories), label: '我11的'),
+
   ];
 
   final List<Widget> tabs = [

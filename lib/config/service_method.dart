@@ -47,7 +47,7 @@ Future homeBannerPageContext() async {
     response = await dio.post(path, data: formData);
 
     if (response.statusCode == 200) {
-      // print(response);
+      print(response);
       return response.data;
     } else {
       throw Exception('后端接口出现异常，请检测代码和服务器情况.........');
@@ -63,7 +63,7 @@ Future homeCategoryPageContext() async {
     final path =
         "https://apitest.hexiaoxiang.com/coursequality/api/v1/category/list?layer=1&platform=0";
     // servicePath['homePageContext'];
-
+    print('开始获取首页分类数据...............${path}');
     // "https://apitest.hexiaoxiang.com/coursequality/api/v1/information/flow/recommend?last_index=0&platform=0";
     response = await Dio().get(path);
     // print('结果--${response.data}');
@@ -78,14 +78,16 @@ Future getHomePageContent() async {
   return Future.wait([homeBannerPageContext(), homeCategoryPageContext()]);
 }
 
-Future getHomeRecommendList() async {
+Future getHomeRecommendList(int last_index) async {
   String path =
-      "https://apitest.hexiaoxiang.com/coursequality/api/v1/information/flow/recommend?last_index=0&platform=0";
+      "https://apitest.hexiaoxiang.com/coursequality/api/v1/information/flow/recommend?last_index=${last_index}&platform=0";
+  print('开始获取首页推荐数据...............${path}');
   return requestGet(path);
 }
 
 Future requestGet(url, {params}) async {
   try {
+    print('请求路径  $url');
     Response response = Response();
     if (params == null) {
       response = await Dio().get(url);

@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage>
   void initState() {
     super.initState();
     _getRecommend();
-    print(this.widget);
+    // print('哈哈');
   }
 
   @override
@@ -107,7 +107,7 @@ class _HomePageState extends State<HomePage>
               future: homeCategoryPageContext(),
             ),
           ),
-          // _getRecommendUI(),
+          _getRecommendUI(),
         ],
       ),
     );
@@ -134,7 +134,7 @@ class _HomePageState extends State<HomePage>
   }
 
   void _getRecommend() {
-    getHomeRecommendList().then((value) {
+    getHomeRecommendList(0).then((value) {
       var data = value["data"] as Map;
       // print("数据请求完成 ${data}");
       setState(() {

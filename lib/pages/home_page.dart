@@ -7,10 +7,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import '../config/service_url.dart';
 import '../config/service_method.dart';
+import 'home_page_recommend.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -24,13 +27,21 @@ class _HomePageState extends State<HomePage>
   @override
   bool get wantKeepAlive => true;
   List recommendList = [];
-
+  EasyRefreshController _refreshcontroller;
+  HomePageRecommend recomendView = HomePageRecommend();
+  int pageIndex = 0;
   @override
   void initState() {
     super.initState();
-    _getRecommend();
-    print(this.widget);
+    _refreshcontroller = EasyRefreshController();
+    _getRecommend(pageIndex);
+    // print(this.widget);
   }
+
+//  GlobalKey<EasyRefresh> _easyRefreshKey =
+  //     new GlobalKey<EasyRefreshState>();
+  // GlobalKey<RefreshFooterState> _footerKey =
+  //     new GlobalKey<RefreshFooterState>();
 
   @override
   Widget build(BuildContext context) {
@@ -75,45 +86,63 @@ class _HomePageState extends State<HomePage>
           style: TextStyle(color: Colors.black),
         ),
       ),
-      body: ListView(
-        children: [
-          Container(
-            height: ScreenUtil().setHeight(272),
-            child: FutureBuilder(
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done &&
-                    snapshot.hasData) {
-                  List swiperDateList = getBannerData(snapshot.data);
-                  return SwiperDiy(swiperDateList: swiperDateList);
-                } else {
-                  return Container();
-                }
-              },
-              future: homeBannerPageContext(),
-            ),
+      body: EasyRefresh(
+          controller: _refreshcontroller,
+          footer: ClassicalFooter(
+            // key: _footerKey,
+            bgColor: Colors.white,
+            textColor: Colors.pink,
+            infoColor: Colors.pink,
+            showInfo: true,
+            noMoreText: '',
+            infoText: '加载中',
+            loadReadyText: '上拉加载....',
           ),
-          Container(
-            height: ScreenUtil().setHeight(300),
-            child: FutureBuilder(
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done &&
-                    snapshot.hasData) {
-                  List navigatorList = getNavigationData(snapshot.data);
-                  return TopNavigator(navigationList: navigatorList);
-                } else {
-                  return Text('加载中');
-                }
-              },
-              future: homeCategoryPageContext(),
-            ),
+          child: ListView(
+            children: [
+              Container(
+                height: ScreenUtil().setHeight(272),
+                child: FutureBuilder(
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done &&
+                        snapshot.hasData) {
+                      List swiperDateList = getBannerData(snapshot.data);
+                      return SwiperDiy(swiperDateList: swiperDateList);
+                    } else {
+                      return Container();
+                    }
+                  },
+                  future: homeBannerPageContext(),
+                ),
+              ),
+              Container(
+                height: ScreenUtil().setHeight(300),
+                child: FutureBuilder(
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done &&
+                        snapshot.hasData) {
+                      List navigatorList = getNavigationData(snapshot.data);
+                      return TopNavigator(navigationList: navigatorList);
+                    } else {
+                      return Text('加载中');
+                    }
+                  },
+                  future: homeCategoryPageContext(),
+                ),
+              ),
+              // _getRecommendUI(),
+              recomendView,
+            ],
           ),
-          // _getRecommendUI(),
-        ],
-      ),
+          onLoad: () async {
+            pageIndex = pageIndex + 1;
+            _getRecommend(pageIndex);
+          }),
     );
   }
 
   List getNavigationData(Map data) {
+    String aa = data['hhh1'];
     Map items_first = (data['data']['Items'] as List).first;
     List<Map<String, dynamic>> navigatorList =
         (items_first['category_list'] as List).cast(); // 顶部轮播组件数
@@ -133,12 +162,14 @@ class _HomePageState extends State<HomePage>
     return bannerList;
   }
 
-  void _getRecommend() {
-    getHomeRecommendList().then((value) {
+  void _getRecommend(int pageIndex) {
+    getHomeRecommendList(pageIndex).then((value) {
       var data = value["data"] as Map;
-      // print("数据请求完成 ${data}");
+      //
       setState(() {
         recommendList = data["Items"] as List;
+        print("数据请求完成 ${recommendList}");
+        recomendView.getRecommend(recommendList);
       });
     });
   }
