@@ -2,7 +2,7 @@ const serviceUrl = 'https://apitest.hexiaoxiang.com/';
 //const serviceUrl= 'http://test.baixingliangfan.cn/baixing/';
 const Map servicePath = {
   'homeCategoryPageContext':
-      serviceUrl + 'oursequality/api/v1/category/list?last_index=0&platform=0',
+      serviceUrl + 'coursequality/api/v1/category/list?layer=1&platform=0',
   'homeBannerPageContext': serviceUrl + 'advertisement/ad/list',
   'homePageRecommend': serviceUrl +
       '/coursequality/api/v1/information/flow/recommend?last_index=0&platform=0', //首页课程推荐

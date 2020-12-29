@@ -92,24 +92,14 @@ Future homeBannerPageContext() async {
     ]
   };
   final path = servicePath['homeBannerPageContext'];
-  // final path = 'https://apitest.hexiaoxiang.com/advertisement/ad/list';
-  print('请求路径  $path');
   return await requestPost(path, formData);
 }
 
 Future homeCategoryPageContext() async {
-  try {
-    // Response response;
-    final path =
-        "https://apitest.hexiaoxiang.com/coursequality/api/v1/category/list?layer=1&platform=0";
-    // servicePath['homePageContext'];
-    print('开始获取首页分类数据...............${path}');
-    // "https://apitest.hexiaoxiang.com/coursequality/api/v1/information/flow/recommend?last_index=0&platform=0";
-    var data = await requestGet(path);
-    // print('结果--${data}');
+  final path = servicePath['homeCategoryPageContext'];
+  var data = await requestGet(path);
+  if (data != null) {
     return data;
-  } catch (err) {
-    print('错误---$err');
   }
 }
 
