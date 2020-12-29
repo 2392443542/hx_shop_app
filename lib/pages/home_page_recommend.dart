@@ -44,7 +44,6 @@ class _HomePageRecommendState extends State<HomePageRecommend> {
 
   void getRecommend(List data) {
     setState(() {
-      print("刷新3");
       recommendList = data;
     });
     //   getHomeRecommendList(pageIndex).then((value) {

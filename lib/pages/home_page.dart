@@ -27,6 +27,8 @@ class _HomePageState extends State<HomePage>
   @override
   bool get wantKeepAlive => true;
   List recommendList = [];
+  List swiperDateList = [];
+  List navigatorList = [];
   EasyRefreshController _refreshcontroller;
   HomePageRecommend recomendView = HomePageRecommend();
   int pageIndex = 0;
@@ -34,14 +36,29 @@ class _HomePageState extends State<HomePage>
   void initState() {
     super.initState();
     _refreshcontroller = EasyRefreshController();
+
+    _getcardList();
+    _getCategory();
     _getRecommend(pageIndex);
-    // print(this.widget);
   }
 
-//  GlobalKey<EasyRefresh> _easyRefreshKey =
-  //     new GlobalKey<EasyRefreshState>();
-  // GlobalKey<RefreshFooterState> _footerKey =
-  //     new GlobalKey<RefreshFooterState>();
+  _getcardList() {
+    homeBannerPageContext().then((value) {
+      setState(() {
+        swiperDateList = getBannerData(value);
+        // print('homeBannerPageContext:${swiperDateList}');
+      });
+    });
+  }
+
+  _getCategory() {
+    homeCategoryPageContext().then((value) {
+      setState(() {
+        // print("哈哈:$value");
+        navigatorList = getNavigationData(value);
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -102,34 +119,13 @@ class _HomePageState extends State<HomePage>
             children: [
               Container(
                 height: ScreenUtil().setHeight(272),
-                child: FutureBuilder(
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done &&
-                        snapshot.hasData) {
-                      List swiperDateList = getBannerData(snapshot.data);
-                      return SwiperDiy(swiperDateList: swiperDateList);
-                    } else {
-                      return Container();
-                    }
-                  },
-                  future: homeBannerPageContext(),
-                ),
+                child: swiperDateList.length > 0
+                    ? SwiperDiy(swiperDateList: swiperDateList)
+                    : Image.asset('assets/placeholder/img_default_16_9.png'),
               ),
               Container(
-                height: ScreenUtil().setHeight(300),
-                child: FutureBuilder(
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done &&
-                        snapshot.hasData) {
-                      List navigatorList = getNavigationData(snapshot.data);
-                      return TopNavigator(navigationList: navigatorList);
-                    } else {
-                      return Text('加载中');
-                    }
-                  },
-                  future: homeCategoryPageContext(),
-                ),
-              ),
+                  height: ScreenUtil().setHeight(300),
+                  child: TopNavigator(navigationList: navigatorList)),
               // _getRecommendUI(),
               recomendView,
             ],
@@ -142,20 +138,22 @@ class _HomePageState extends State<HomePage>
   }
 
   List getNavigationData(Map data) {
-    String aa = data['hhh1'];
-    Map items_first = (data['data']['Items'] as List).first;
+    List items = data['Items'];
+    Map items_first = items.first;
+    print('navigationList:${items_first}');
     List<Map<String, dynamic>> navigatorList =
         (items_first['category_list'] as List).cast(); // 顶部轮播组件数
-    Map items_last = (data['data']['Items'] as List).last;
+    Map items_last = items.last;
 
     List<Map<String, dynamic>> categotory =
         (items_last['category_list'] as List).cast();
     navigatorList.addAll(categotory);
+
     return navigatorList;
   }
 
-  List getBannerData(Map data) {
-    Map dataFirst = (data['data'] as List).first;
+  List getBannerData(data) {
+    Map dataFirst = (data as List).first;
 
     Map ad_zone_list = (dataFirst['ad_zone_list'] as List).first;
     List bannerList = ad_zone_list['ad_list'];
@@ -164,11 +162,9 @@ class _HomePageState extends State<HomePage>
 
   void _getRecommend(int pageIndex) {
     getHomeRecommendList(pageIndex).then((value) {
-      var data = value["data"] as Map;
-      //
+      var data = value as Map;
       setState(() {
         recommendList = data["Items"] as List;
-        print("数据请求完成 ${recommendList}");
         recomendView.getRecommend(recommendList);
       });
     });
@@ -178,8 +174,6 @@ class _HomePageState extends State<HomePage>
     String imageUrl;
     String title;
     List tag;
-    // List<Widget> tagUI;
-
     imageUrl = value["cover"] as String;
     title = value["title"] as String;
     tag = (value['flag'] as List).cast();
@@ -317,6 +311,7 @@ class SwiperDiy extends StatelessWidget {
         itemBuilder: (BuildContext context, int index) {
           Map bannerData = this.swiperDateList[index];
           var imageStr = bannerData["image_url"];
+
           return ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: FadeInImage.assetNetwork(
