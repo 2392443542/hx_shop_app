@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 //         child: Text('我的'),
 //       ),
 //     );
-//   }
 // }
 
 class MemberPage extends StatefulWidget {

@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'dart:async';
 import 'dart:io';
 import '../config/service_url.dart';
+import '../config/tools.dart';
 // import '../config/httpHeaders.dart';
 
 /*
@@ -26,39 +27,33 @@ Future requestPost(url, formData) async {
   Dio dio = new Dio();
 
   try {
+    // showLoading();
     dio.options.contentType = 'application/json;charset=UTF-8';
-    // var formData = {
-    //   'platform': 0,
-    //   'uid': 3987158,
-    //   'query_param': [
-    //     {'page_size': 30, 'banner_zone_id': 2, 'type': 2, 'page': 1}
-    //   ]
-    // };
-    // // final path = servicePath['homeBannerPageContext'];
-    // final path = 'https://apitest.hexiaoxiang.com/advertisement/ad/list';
-    // print('请求路径  $path');
     response = await dio.post(url, data: formData);
 
     if (response.statusCode == 200) {
       Map<String, dynamic> result = response.data as Map<String, dynamic>;
-
+      print(result);
       int code = result['code'] as int;
       if (code == 20000 || code == 20001 || code == 20002) {
         return result['data'];
       } else {
         print('path:$url \n error:${result}');
+        showTitle("网络请求失败，请重试");
       }
-      // return response.data;
     } else {
-      throw Exception('后端接口出现异常，请检测代码和服务器情况.........');
+      // throw Exception('后端接口出现异常，请检测代码和服务器情况.........');
+      showTitle("网络请求失败，请重试");
     }
   } catch (e) {
     print('ERROR:======>${e}');
+    showTitle("网络请求失败，请重试");
   }
 }
 
 Future requestGet(url, {params}) async {
   try {
+    showLoading();
     Response response = Response();
     if (params == null) {
       response = await Dio().get(url);

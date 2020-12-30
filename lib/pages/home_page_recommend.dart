@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:hx_shop_app/main.dart';
 import '../config/service_url.dart';
 import '../config/service_method.dart';
 
@@ -105,6 +106,10 @@ class _HomePageRecommendState extends State<HomePageRecommend> {
     }
 
     return InkWell(
+      onTap: () {
+        print('去详情');
+        Navigator.pushNamed(context, LightVideo);
+      },
       child: Container(
         width: ScreenUtil().setWidth(330),
         // height: ScreenUtil().setWidth(498),

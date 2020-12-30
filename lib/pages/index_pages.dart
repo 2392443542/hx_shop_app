@@ -6,6 +6,7 @@ import 'member_page.dart';
 import 'home_page.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../config/tools.dart';
 
 class IndexPage extends StatefulWidget {
   IndexPage({Key key}) : super(key: key);
@@ -24,7 +25,6 @@ class _IndexPageState extends State<IndexPage> {
     BottomNavigationBarItem(
         icon: Icon(CupertinoIcons.shopping_cart), label: '购物车'),
     BottomNavigationBarItem(icon: Icon(CupertinoIcons.memories), label: '我11的'),
-
   ];
 
   final List<Widget> tabs = [
