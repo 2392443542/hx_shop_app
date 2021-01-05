@@ -1,5 +1,8 @@
-import 'package:video_player/video_player.dart';
+import 'dart:html';
+
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
+import 'package:chewie/chewie.dart';
 
 class LightVideoPage extends StatefulWidget {
   LightVideoPage({Key key}) : super(key: key);
@@ -13,47 +16,62 @@ class _LightVideoPageState extends State<LightVideoPage> {
   //
   bool _isPlaying = false;
   VideoPlayerController _controller;
+  // VideoPlayerController videoPlayerController;
+  ChewieController chewieController;
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.network(this.url)
+    _controller = VideoPlayerController.network(this.url);
+    chewieController = ChewieController(
+      videoPlayerController: _controller,
+      aspectRatio: 3 / 2, //宽高比
+      autoPlay: false, //自动播放
+      looping: false, //循环播放
+    );
     // 播放状态
-      ..addListener(() {
-        final bool isPlaying = _controller.value.isPlaying;
-        if (isPlaying != _isPlaying) {
-          setState(() { _isPlaying = isPlaying; });
-        }
-      })
+    //   ..addListener(() {
+    //     final bool isPlaying = _controller.value.isPlaying;
+    //     if (isPlaying != _isPlaying) {
+    //       setState(() { _isPlaying = isPlaying; });
+    //     }
+    //   })
     // 在初始化完成后必须更新界面
-      ..initialize().then((data) {
-        print('播放状态');
-        setState(() {
-          // print('播放状态${data}');
-        });
-      });
+    //   ..initialize().then((data) {
+    //     print('播放状态');
+    //     setState(() {
+    //       // print('播放状态${data}');
+    //     });
+    //   });
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body:Container(
-          color: Colors.black,
-        child:Center(
-          child: _controller.value.initialized
-          // 加载成功
-              ?  AspectRatio(
-            aspectRatio: _controller.value.aspectRatio,
-            child: VideoPlayer(_controller),
-          ) :   AspectRatio(
-          aspectRatio:9/16,child: Container(child: Image.asset('assets/placeholder/img_default_16_9.png'),),),
-        ),),
-        floatingActionButton: new FloatingActionButton(
-          onPressed: _controller.value.isPlaying
-              ? _controller.pause
-              : _controller.play,
-          child:  Icon(
-            _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
-          ),
+        appBar: AppBar(title:Text('视频') ,),
+      body: Chewie(
+          controller: chewieController,
+
         ),
+
       );
   }
+  @override
+  void dispose() {
+    /**
+     * 页面销毁时，视频播放器也销毁
+     */
+    _controller.dispose();
+    chewieController.dispose();
+    // super.dispose();
+    super.dispose();
+  }
+//播放器
+
+Widget videoControl() {
+    return Container(
+      alignment: Alignment.bottomLeft,
+      child:Row(
+        children: [],
+      ) ,
+    )
+}
   }
