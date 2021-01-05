@@ -33,7 +33,7 @@ Future requestPost(url, formData) async {
 
     if (response.statusCode == 200) {
       Map<String, dynamic> result = response.data as Map<String, dynamic>;
-      print(result);
+      // print(result);
       int code = result['code'] as int;
       if (code == 20000 || code == 20001 || code == 20002) {
         return result['data'];
@@ -53,7 +53,7 @@ Future requestPost(url, formData) async {
 
 Future requestGet(url, {params}) async {
   try {
-    showLoading();
+    // showLoading();
     Response response = Response();
     if (params == null) {
       response = await Dio().get(url);
