@@ -1,8 +1,9 @@
-import 'dart:html';
+
 
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
+
 
 class LightVideoPage extends StatefulWidget {
   LightVideoPage({Key key}) : super(key: key);
@@ -25,8 +26,11 @@ class _LightVideoPageState extends State<LightVideoPage> {
     chewieController = ChewieController(
       videoPlayerController: _controller,
       aspectRatio: 3 / 2, //宽高比
-      autoPlay: false, //自动播放
+      showControls:true,
+      autoInitialize: true,
+      autoPlay: true, //自动播放
       looping: false, //循环播放
+      customControls: videoControl(),
     );
     // 播放状态
     //   ..addListener(() {
@@ -47,10 +51,13 @@ class _LightVideoPageState extends State<LightVideoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title:Text('视频') ,),
-      body: Chewie(
+      body:Container(
+        alignment: Alignment.topLeft,
+        // child: Text('data'),
+        child:  Chewie(
           controller: chewieController,
-
         ),
+      )
 
       );
   }
@@ -68,10 +75,12 @@ class _LightVideoPageState extends State<LightVideoPage> {
 
 Widget videoControl() {
     return Container(
+      // height: 100,
+      color: Colors.red,
       alignment: Alignment.bottomLeft,
       child:Row(
-        children: [],
+        children: [Text('播放')],
       ) ,
-    )
+    );
 }
   }

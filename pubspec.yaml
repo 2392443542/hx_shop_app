@@ -37,6 +37,9 @@ dependencies:
   video_player: 1.0.1
   fluttertoast: 7.1.6
   flutter_easyloading: 2.2.2
+  common_utils: ^1.2.1
+  auto_orientation: ^1.0.5
+  screen: ^0.0.5
 
 # dependencies:
 #   dio: 3.x #latest version
