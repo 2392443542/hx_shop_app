@@ -18,9 +18,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       routes: routes,
+
       // builder: EasyLoading.init(),
-      home: Container(
-        child: IndexPage(),
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text("video"),
+        ),
+        body: Container(
+          child: IndexPage(),
+        ),
       ),
     );
   }

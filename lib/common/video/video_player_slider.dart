@@ -35,11 +35,13 @@ class _VideoPlayerSliderState extends State<VideoPlayerSlider> {
   @override
   void didUpdateWidget(VideoPlayerSlider oldWidget) {
     super.didUpdateWidget(oldWidget);
+
     if (!handle && videoInit) {
       int position = controller.value.position.inMilliseconds;
       int duration = controller.value.duration.inMilliseconds;
-      if(position>=duration){
-        position=duration;
+      print("slider--${position}");
+      if (position >= duration) {
+        position = duration;
       }
       setState(() {
         progressValue = position / duration * 100;
@@ -53,6 +55,7 @@ class _VideoPlayerSliderState extends State<VideoPlayerSlider> {
 
   @override
   Widget build(BuildContext context) {
+    print("重建");
     return SliderTheme(
       //自定义风格
       data: SliderTheme.of(context).copyWith(

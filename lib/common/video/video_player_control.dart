@@ -79,6 +79,7 @@ class VideoPlayerControlState extends State<VideoPlayerControl> {
   // 供父组件调用刷新页面，减少父组件的build
   void setPosition({position, totalDuration}) {
     setState(() {
+      print('播放进度${position}');
       _position = position;
       _totalDuration = totalDuration;
     });

@@ -99,6 +99,7 @@ class _VideoPlayerUIState extends State<VideoPlayerUI> {
       left: !_isFullScreen,
       right: !_isFullScreen,
       child: Container(
+        color: Colors.blue,
         width: _isFullScreen ? _window.width : widget.width,
         height: _isFullScreen ? _window.height : widget.height,
         child: _isHadUrl(),
@@ -183,7 +184,7 @@ class _VideoPlayerUIState extends State<VideoPlayerUI> {
     setState(() {
       _videoInit = true;
       _videoError = false;
-      _controller.play();
+      // _controller.play();
     });
   }
 

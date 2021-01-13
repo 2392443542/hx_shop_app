@@ -35,9 +35,10 @@ class _VideoPlayerPanState extends State<VideoPlayerPan>
   double brightness = 0.0; //亮度
   bool brightnessOk = false; // 是否允许调节亮度
 
-  VideoPlayerController get controller => ControllerWidget.of(context).controller;
+  VideoPlayerController get controller =>
+      ControllerWidget.of(context).controller;
   bool get videoInit => ControllerWidget.of(context).videoInit;
-  String get title=>ControllerWidget.of(context).title;
+  String get title => ControllerWidget.of(context).title;
 
   @override
   void afterFirstLayout(BuildContext context) {
@@ -219,8 +220,7 @@ class _VideoPlayerPanState extends State<VideoPlayerPan>
       return;
     }
     double value = _setHorizontalValue();
-    int current =
-        (value * controller.value.duration.inMilliseconds).toInt();
+    int current = (value * controller.value.duration.inMilliseconds).toInt();
     await controller.seekTo(Duration(milliseconds: current));
     allowHorizontal = false;
     setState(() {
@@ -233,8 +233,8 @@ class _VideoPlayerPanState extends State<VideoPlayerPan>
     double valueHorizontal =
         double.parse((movePan / layoutWidth).toStringAsFixed(2));
     // 当前进度条百分比
-    double currentValue = position.inMilliseconds /
-        controller.value.duration.inMilliseconds;
+    double currentValue =
+        position.inMilliseconds / controller.value.duration.inMilliseconds;
     double value =
         double.parse((currentValue + valueHorizontal).toStringAsFixed(2));
     if (value >= 1.00) {

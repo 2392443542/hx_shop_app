@@ -140,7 +140,7 @@ class _HomePageState extends State<HomePage>
   List getNavigationData(Map data) {
     List items = data['Items'];
     Map items_first = items.first;
-    print('navigationList:${items_first}');
+    // print('navigationList:${items_first}');
     List<Map<String, dynamic>> navigatorList =
         (items_first['category_list'] as List).cast(); // 顶部轮播组件数
     Map items_last = items.last;
