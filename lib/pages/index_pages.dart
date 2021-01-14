@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:hx_shop_app/Video/light_video.dart';
 import 'cart_page.dart';
 import "category_page.dart";
+import 'package:flutter/services.dart';
 import 'member_page.dart';
 import 'home_page.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../config/tools.dart';
+import 'package:auto_orientation/auto_orientation.dart';
 // import '../Video/light_audio.dart';
 
 class IndexPage extends StatefulWidget {
@@ -36,7 +38,19 @@ class _IndexPageState extends State<IndexPage> {
     MemberPage()
   ];
   int _currentIndex = 0;
-  // var
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // AutoOrientation.portraitAutoMode();
+    // OrientationPlugin.forceOrientation(DeviceOrientation.landscapeLeft);
+    SystemChrome.setPreferredOrientations([
+      // DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitUp,
+      // DeviceOrientation.landscapeLeft,
+      // DeviceOrientation.landscapeRight,
+    ]);
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -14,6 +14,7 @@ import '../config/service_url.dart';
 import '../config/service_method.dart';
 import 'home_page_recommend.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:flutter/services.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -40,6 +41,12 @@ class _HomePageState extends State<HomePage>
     _getcardList();
     _getCategory();
     _getRecommend(pageIndex);
+    // SystemChrome.setPreferredOrientations([
+    //   DeviceOrientation.portraitUp,
+    //   DeviceOrientation.portraitDown,
+    //   // DeviceOrientation.landscapeLeft,
+    //   // DeviceOrientation.landscapeRight,
+    // ]);
   }
 
   _getcardList() {
@@ -54,7 +61,6 @@ class _HomePageState extends State<HomePage>
   _getCategory() {
     homeCategoryPageContext().then((value) {
       setState(() {
-        // print("哈哈:$value");
         navigatorList = getNavigationData(value);
       });
     });

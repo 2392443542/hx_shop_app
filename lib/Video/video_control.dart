@@ -4,6 +4,10 @@ import 'video_Controller_widget.dart';
 import 'video_slider.dart';
 import 'dart:async';
 import 'package:common_utils/common_utils.dart';
+import 'package:auto_orientation/auto_orientation.dart';
+import 'package:flutter/services.dart';
+import 'package:device_info/device_info.dart';
+import 'dart:io';
 
 class VideoControlPage extends StatefulWidget {
   VideoControlPage({
@@ -24,6 +28,25 @@ class VideoControlPageState extends State<VideoControlPage> {
   Duration _position = Duration(seconds: 0);
   Duration _totalDuration = Duration(seconds: 0);
   bool get isPlaying => controller.value.isPlaying;
+  bool _isFullScreen = false;
+  MethodChannel _channel = const MethodChannel('flutter_ios_device');
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // initPlatformState();
+    // SystemChrome.setPreferredOrientations([
+    //   DeviceOrientation.portraitUp,
+    //   DeviceOrientation.portraitDown,
+    //   DeviceOrientation.landscapeLeft,
+    //   DeviceOrientation.landscapeRight,
+    // ]).then((_) {
+    //   if (Platform.isIOS) {
+    //     this.changeScreenOrientation(DeviceOrientation.landscapeRight);
+    //   }
+    // });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -91,7 +114,10 @@ class VideoControlPageState extends State<VideoControlPage> {
               ),
               Container(
                 margin: EdgeInsets.only(right: 6),
-                child: Image.asset("assets/video/video_orientition.png"),
+                child: InkWell(
+                  child: Image.asset("assets/video/video_orientition.png"),
+                  onTap: changeOrientation,
+                ),
               )
             ],
           ),
@@ -120,7 +146,6 @@ class VideoControlPageState extends State<VideoControlPage> {
         _position = position;
         _totalDuration = totalDuration;
       });
-
     });
   }
 
@@ -138,10 +163,41 @@ class VideoControlPageState extends State<VideoControlPage> {
     );
   }
 
-  // @override
-  // void didUpdateWidget(VideoControlPage oldWidget) {
-  //   super.didUpdateWidget(oldWidget);
-  //   // print("改变数据");
-  //
-  // }
+  Future<void> changeScreenOrientation(DeviceOrientation orientation) {
+    String o;
+    switch (orientation) {
+      case DeviceOrientation.portraitUp:
+        o = 'portraitUp';
+        break;
+      case DeviceOrientation.portraitDown:
+        o = 'portraitDown';
+        break;
+      case DeviceOrientation.landscapeLeft:
+        o = 'landscapeLeft';
+        break;
+      case DeviceOrientation.landscapeRight:
+        o = 'landscapeRight';
+        break;
+    }
+    return _channel.invokeMethod('change_screen_orientation', [o]);
+  }
+
+  void changeOrientation() {
+    if (_isFullScreen) {
+      _isFullScreen = false;
+
+      /// 如果是全屏就切换竖屏
+      AutoOrientation.portraitAutoMode();
+
+      ///显示状态栏，与底部虚拟操作按钮
+      SystemChrome.setEnabledSystemUIOverlays(
+          [SystemUiOverlay.top, SystemUiOverlay.bottom]);
+    } else {
+      _isFullScreen = true;
+      AutoOrientation.landscapeAutoMode();
+
+      ///关闭状态栏，与底部虚拟操作按钮
+      SystemChrome.setEnabledSystemUIOverlays([]);
+    }
+  }
 }
