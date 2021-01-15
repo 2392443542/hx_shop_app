@@ -49,11 +49,15 @@ class VideoControlPageState extends State<VideoControlPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        widget.child,
-        _bottomControl(context),
-      ],
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      child: Stack(
+        children: [
+          widget.child,
+          _bottomControl(context),
+        ],
+      ),
     );
   }
 
@@ -86,12 +90,23 @@ class VideoControlPageState extends State<VideoControlPage> {
           // color: Colors.black87,
           child: Row(
             children: [
-              InkWell(
-                child: Image.asset(isPlaying
-                    ? "assets/video/video_pause.png"
-                    : "assets/video/video_play.png"),
-                onTap: playorPause,
+              IconButton(
+                // 播放按钮
+                padding: EdgeInsets.zero,
+                iconSize: 26,
+                icon: Icon(
+                  // 根据控制器动态变化播放图标还是暂停
+                  controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                  color: Colors.white,
+                ),
+                onPressed: playorPause,
               ),
+              // InkWell(
+              //   child: Image.asset(controller.value.isPlaying
+              //       ? "assets/video/video_pause.png"
+              //       : "assets/video/video_play.png"),
+              //   onTap: playorPause,
+              // ),
               Container(
                 margin: EdgeInsets.only(left: 13, right: 7),
                 child: Text(
@@ -127,7 +142,9 @@ class VideoControlPageState extends State<VideoControlPage> {
   }
 
   void playorPause() {
-    controller.value.isPlaying ? pause() : play();
+    setState(() {
+      controller.value.isPlaying ? pause() : play();
+    });
   }
 
   void play() {
@@ -141,7 +158,6 @@ class VideoControlPageState extends State<VideoControlPage> {
   // 供父组件调用刷新页面，减少父组件的build
   void setPositionAndTotalDuration(Duration position, Duration totalDuration) {
     setState(() {
-      // print('播放进度${position}');
       setState(() {
         _position = position;
         _totalDuration = totalDuration;
@@ -184,20 +200,24 @@ class VideoControlPageState extends State<VideoControlPage> {
 
   void changeOrientation() {
     if (_isFullScreen) {
-      _isFullScreen = false;
+      setState(() {
+        _isFullScreen = false;
 
-      /// 如果是全屏就切换竖屏
-      AutoOrientation.portraitAutoMode();
+        /// 如果是全屏就切换竖屏
+        AutoOrientation.portraitAutoMode();
 
-      ///显示状态栏，与底部虚拟操作按钮
-      SystemChrome.setEnabledSystemUIOverlays(
-          [SystemUiOverlay.top, SystemUiOverlay.bottom]);
+        ///显示状态栏，与底部虚拟操作按钮
+        SystemChrome.setEnabledSystemUIOverlays(
+            [SystemUiOverlay.top, SystemUiOverlay.bottom]);
+      });
     } else {
-      _isFullScreen = true;
-      AutoOrientation.landscapeAutoMode();
+      setState(() {
+        _isFullScreen = true;
+        AutoOrientation.landscapeAutoMode();
 
-      ///关闭状态栏，与底部虚拟操作按钮
-      SystemChrome.setEnabledSystemUIOverlays([]);
+        ///关闭状态栏，与底部虚拟操作按钮
+        SystemChrome.setEnabledSystemUIOverlays([]);
+      });
     }
   }
 }

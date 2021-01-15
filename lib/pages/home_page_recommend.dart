@@ -47,13 +47,6 @@ class _HomePageRecommendState extends State<HomePageRecommend> {
     setState(() {
       recommendList = data;
     });
-    //   getHomeRecommendList(pageIndex).then((value) {
-    //     var data = value["data"] as Map;
-    //     // print("数据请求完成 ${data}");
-    //     setState(() {
-    //       // recommendList = data["Items"] as List;
-    //     });
-    //   });
   }
 
   Widget _recommendCell(value) {

@@ -24,9 +24,6 @@ class _VideoSlidePageState extends State<VideoSlidePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print("播放器是否初始化-");
-    // print("播放器是否初始化----${_controller}");
-    // _controller.addListener(_videoListener1);
   }
 
   @override
@@ -55,14 +52,12 @@ class _VideoSlidePageState extends State<VideoSlidePage> {
   @override
   void didUpdateWidget(VideoSlidePage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    print("改变数据1");
     setState(() {
       if (!_controller.value.hasError) {
         int position = _controller.value.position.inMilliseconds;
         int duration = _controller.value.duration.inMilliseconds;
         this.progressValue = position / duration;
       }
-
     });
   }
 }

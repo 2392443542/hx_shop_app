@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'video_control.dart';
 import 'video_Controller_widget.dart';
+import 'dart:ui';
 
 class VideoPlayerPage extends StatefulWidget {
   VideoPlayerPage(
@@ -10,12 +11,13 @@ class VideoPlayerPage extends StatefulWidget {
 
   final width;
   final height;
+
   @override
   _VideoPlayerPageState createState() => _VideoPlayerPageState();
 }
 
 class _VideoPlayerPageState extends State<VideoPlayerPage>
-    {
+    with AutomaticKeepAliveClientMixin {
   final GlobalKey<VideoControlPageState> _key =
       GlobalKey<VideoControlPageState>();
   String url =
@@ -24,42 +26,18 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
   bool _isPlaying = false;
   bool _playerError = false;
   VideoPlayerController _controller;
-  // VideoPlayerController videoPlayerController;
-  // ChewieController chewieController;
-  // @override
-  // bool get wantKeepAlive => true;
+
+  /// 记录是否全屏
+  bool get _isFullScreen =>
+      MediaQuery.of(context).orientation == Orientation.landscape;
+
+  Size get _window => MediaQueryData.fromWindow(window).size;
+  @override
+  bool get wantKeepAlive => true;
   @override
   void initState() {
     super.initState();
     _controller = VideoPlayerController.asset("/assets/MP4/video.mp4")
-      // 播放状态
-      // ..addListener(() async {
-      //   if (_controller.value.hasError) {
-      //     _playerError = true;
-      //   } else {
-      //     final bool isPlaying = _controller.value.isPlaying;
-      //     if (isPlaying) {
-      //       if (isPlaying != _isPlaying) {
-      //         setState(() {
-      //           _isPlaying = isPlaying;
-      //         });
-      //       }
-
-      //       //          int position = controller.value.position.inMilliseconds;
-      //       // int duration = controller.value.duration.inMilliseconds;
-      //       Duration position = await _controller.position;
-      //       Duration total = _controller.value.duration;
-      //       print("video time ${_controller.position} -- ${_key.currentState}");
-      //       if (position >= total) {
-      //         await _controller.seekTo(Duration(seconds: 0));
-      //         await _controller.pause();
-      //       } else {
-      //         _key.currentState.setPositionAndTotalDuration(position, total);
-      //       }
-      //     }
-      //   }
-      // })
-
       // 在初始化完成后必须更新界面
       ..initialize().then((_) {
         setState(() {
@@ -72,7 +50,6 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
   }
 
   void _videoListener() async {
-    print("播放");
     if (_controller.value.hasError) {
       setState(() {
         _playerError = true;
@@ -84,11 +61,8 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
         await _controller.seekTo(Duration(seconds: 0));
         await _controller.pause();
       }
-
-      print("播放  ${res}  ${_key.currentState}");
       if (_controller.value.isPlaying && _key.currentState != null) {
         /// 减少build次数
-        print("video time ${_controller.position}");
         _key.currentState.setPositionAndTotalDuration(
           res,
           _controller.value.duration,
@@ -104,8 +78,9 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
         controlKey: _key,
         controller: _controller,
         child: Container(
-          width: widget.width,
-          height: widget.height,
+          color: Colors.blue,
+          width: _isFullScreen ? _window.width : widget.width,
+          height: _isFullScreen ? _window.height : widget.height,
           child: VideoControlPage(
             child: initPlayer(),
             key: _key,
@@ -117,10 +92,13 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
 
   Widget initPlayer() {
     return _controller.value.initialized
-        // 加载成功
-        ? new AspectRatio(
-            aspectRatio: _controller.value.aspectRatio,
-            child: VideoPlayer(_controller),
+        ? Container(
+            width: double.infinity,
+            height: double.infinity,
+            child: AspectRatio(
+              aspectRatio: _controller.value.aspectRatio,
+              child: VideoPlayer(_controller),
+            ),
           )
         : new Container();
   }
@@ -131,8 +109,6 @@ class _VideoPlayerPageState extends State<VideoPlayerPage>
      * 页面销毁时，视频播放器也销毁
      */
     _controller.dispose();
-    // chewieController.dispose();
-    // super.dispose();
     super.dispose();
   }
 //播放器

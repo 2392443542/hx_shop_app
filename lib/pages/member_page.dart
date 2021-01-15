@@ -17,11 +17,14 @@ class MemberPage extends StatelessWidget {
 
     return Scaffold(
       body: Container(
+        color: Colors.red,
         // width: 300,
         // height: 300,
         child: VideoPlayerPage(
-          width: _window.width,
-          height: _window.width * 9 / 16.0,
+          width: _isFullScreen?_window.height:_window.width,
+          height: _isFullScreen?_window.width:_window.width * 9 / 16.0,
+          // width: _window.width,
+          // height: _window.width * 9 / 16.0,
         ),
       ),
     );

@@ -19,9 +19,10 @@ class VideoPlayerControl extends StatefulWidget {
 }
 
 class VideoPlayerControlState extends State<VideoPlayerControl> {
-  VideoPlayerController get controller => ControllerWidget.of(context).controller;
+  VideoPlayerController get controller =>
+      ControllerWidget.of(context).controller;
   bool get videoInit => ControllerWidget.of(context).videoInit;
-  String get title=>ControllerWidget.of(context).title;
+  String get title => ControllerWidget.of(context).title;
   // 记录video播放进度
   Duration _position = Duration(seconds: 0);
   Duration _totalDuration = Duration(seconds: 0);
@@ -79,7 +80,6 @@ class VideoPlayerControlState extends State<VideoPlayerControl> {
   // 供父组件调用刷新页面，减少父组件的build
   void setPosition({position, totalDuration}) {
     setState(() {
-      print('播放进度${position}');
       _position = position;
       _totalDuration = totalDuration;
     });
@@ -206,9 +206,9 @@ class VideoPlayerControlState extends State<VideoPlayerControl> {
     // 如果是全屏，点击返回键则关闭全屏，如果不是，则系统返回键
     if (_isFullScreen) {
       _toggleFullScreen();
-    } else if(ModalRoute.of(context).isFirst) {
+    } else if (ModalRoute.of(context).isFirst) {
       SystemNavigator.pop();
-    }else{
+    } else {
       Navigator.pop(context);
     }
   }
